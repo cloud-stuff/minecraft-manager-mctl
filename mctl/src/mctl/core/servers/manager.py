@@ -13,7 +13,7 @@ class ServerManager:
         self.server_path = SERVERS_PATH / server_name
         self.jar_path = self.server_path / "server.jar"
         self.pid_file = self.server_path / "pid"
-        self.log_file = self.server_path/ "logs" / "latest.log"
+        self.log_file = self.server_path / "logs" / "latest.log"
 
     def _is_running(self) -> bool:
         if not self.pid_file.exists():
@@ -41,12 +41,13 @@ class ServerManager:
         self.log_file.parent.mkdir(exist_ok=True)
 
         cmd = ["java", "-Xmx2G", "-Xms1G", "-jar", str(self.jar_path), "nogui"]
-        process = subprocess.Popen(
-            cmd,
-            cwd=self.server_path,
-            stdout=open(self.log_file, "a"),
-            stderr=subprocess.STDOUT,
-        )
+        with open(self.log_file, "a") as log_fh:
+            process = subprocess.Popen(
+                cmd,
+                cwd=self.server_path,
+                stdout=log_fh,
+                stderr=subprocess.STDOUT,
+            )
         self.pid_file.write_text(str(process.pid))
         print(f"Started server '{self.server_name}' (PID {process.pid})")
 

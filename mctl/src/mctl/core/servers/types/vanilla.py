@@ -14,5 +14,5 @@ class VanillaInstaller(BaseInstaller):
         except StopIteration:
             raise typer.BadParameter(f"Version {version} does not exist")
 
-        version_json = requests.get(version_info["url"]).json()
+        version_json = requests.get(version_info["url"], timeout=10).json()
         return version_json["downloads"]["server"]["url"]

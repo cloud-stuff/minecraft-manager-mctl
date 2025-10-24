@@ -18,7 +18,7 @@ class ServerRegistry:
         Raises ServerNotFoundError if not found.
         """
         server_dir = self.base / "servers" / name
-        meta_path = server_dir / "mcman.yaml"
+        meta_path = server_dir / "mctl.yaml"
 
         if not meta_path.exists():
             raise FileNotFoundError(f"Server '{name}' not found in {server_dir}")

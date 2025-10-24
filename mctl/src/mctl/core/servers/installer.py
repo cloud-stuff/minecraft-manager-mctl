@@ -18,8 +18,9 @@ class ServerInstaller:
         #
         # fill up the server types
 
-        for module_info in pkgutil.iter_modules(['core/servers/types']):
-            module = importlib.import_module(f"minecraft_manager.core.servers.types.{module_info.name}")
+        types_dir = (Path(__file__).parent / "types").resolve()
+        for module_info in pkgutil.iter_modules([str(types_dir)]):
+            module = importlib.import_module(f"mctl.core.servers.types.{module_info.name}")
             for obj_name in dir(module):
                 obj = getattr(module, obj_name)
                 if isinstance(obj, type) and hasattr(obj, "name"):
@@ -61,7 +62,7 @@ class ServerInstaller:
             "memory": memory,
             "jar": str(target_dir / "server.jar"),
         }
-        with open(target_dir / "mcman.yaml", "w") as f:
+        with open(target_dir / "mctl.yaml", "w") as f:
             yaml.dump(meta, f)
 
         print(f"Server installed at {target_dir}")

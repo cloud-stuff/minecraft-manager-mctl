@@ -23,14 +23,14 @@ DEFAULT_CONFIG = {
 @app.command()
 def init(
         path: Path = typer.Option(
-            "~/.mcman", "--path", "-p", help="Path where mcman will initialize its environment."
+            "~/.mctl", "--path", "-p", help="Path where mctl will initialize its environment."
         ),
         force: bool = typer.Option(
             False, "--force", "-f", help="Override existing configs and directories if present."
         )
 ) -> None:
     """
-    Initialise the mcman environment - create directory structure to store configs, servers, downloads, etc.
+    Initialise the mctl environment - create directory structure to store configs, servers, downloads, etc.
     """
     initialiser = ProjectInitialiser(path)
 

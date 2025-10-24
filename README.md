@@ -71,7 +71,7 @@ mctl init [OPTIONS]
 
 | Option            | Description                    | Default    |
 | ----------------- | ------------------------------ | ---------- |
-| `-p, --path PATH` | Path to initialize environment | `~/.mcman` |
+| `-p, --path PATH` | Path to initialize environment | `~/.mctl` |
 | `-f, --force`     | Override existing directories  | `False`    |
 
 **Example:**
