@@ -3,7 +3,7 @@ name = "mctl"
 version = "0.1.0.dev2"
 description = "Minecraft server management CLI - MCTL"
 authors = [
-    {name = "Alex Lykasov", email = "alex@lykasov.com"}
+    {name = "Alex Lykasov", email = "pypi-alex@lykasov.com"}
 ]
 readme = "README.md"
 license = "MIT"
