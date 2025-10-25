@@ -4,7 +4,7 @@
 
 `mctl` is a command-line interface for managing multiple Minecraft servers with ease. It helps you **initialize environments**, **install or remove servers**, **start or stop them**, and **configure server properties** directly from your terminal. The tool is designed to automate repetitive administrative tasks, making Minecraft server management faster, cleaner, and more consistent across environments.
 
-![Python Version](https://img.shields.io/badge/python-≥3.9-blue.svg)
+![Python Version](https://img.shields.io/badge/python-≥3.10-blue.svg)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 
