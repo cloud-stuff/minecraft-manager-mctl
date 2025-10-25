@@ -105,14 +105,9 @@ jobs:
         run: |
           make package
 
-      - name: Configure PyPI repository
-        working-directory: ./mctl
-        run: |
-          poetry config repositories.pypi https://upload.pypi.org/legacy/
-
       - name: Publish to PyPI
         working-directory: ./mctl
         env:
           POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
         run: |
-          poetry publish -r pypi -u __token__ -p "$POETRY_PYPI_TOKEN_PYPI" --no-interaction --no-ansi
+          poetry publish -u __token__ -p "$POETRY_PYPI_TOKEN_PYPI" --no-interaction --no-ansi
