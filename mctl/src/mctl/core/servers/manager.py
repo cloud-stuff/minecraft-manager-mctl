@@ -41,7 +41,7 @@ class ServerManager:
         self.log_file.parent.mkdir(exist_ok=True)
 
         cmd = ["java", "-Xmx2G", "-Xms1G", "-jar", str(self.jar_path), "nogui"]
-        with open(self.log_file, "a") as log_fh:
+        with open(self.log_file, "a", encoding="utf-8") as log_fh:
             process = subprocess.Popen(
                 cmd,
                 cwd=self.server_path,

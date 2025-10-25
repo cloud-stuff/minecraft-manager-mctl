@@ -1,4 +1,3 @@
-import requests
 from .base import BaseInstaller
 
 class PurpurInstaller(BaseInstaller):

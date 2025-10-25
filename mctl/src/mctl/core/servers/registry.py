@@ -9,7 +9,7 @@ from mctl.core.interfaces import ServerInfoResponse
 
 class ServerRegistry:
 
-    def __init__(self, base_path: Path = None):
+    def __init__(self, base_path: Path):
         self.base = (base_path or DEFAULT_HOME_PATH).expanduser().resolve()
 
     def get_info(self, name: str) -> ServerInfoResponse:
@@ -23,7 +23,7 @@ class ServerRegistry:
         if not meta_path.exists():
             raise FileNotFoundError(f"Server '{name}' not found in {server_dir}")
 
-        with open(meta_path) as f:
+        with open(meta_path, encoding="utf-8") as f:
             meta = yaml.safe_load(f) or {}
 
         return ServerInfoResponse(**{

@@ -1,14 +1,14 @@
 import typer
 
 from mctl.core.constants import DEFAULT_HOME_PATH
-from mctl.core.servers.installer import ServerInstaller
+from mctl.core.servers.installer import ServerInstaller, InstallArguments
 from mctl.core.servers.registry import ServerRegistry
 from mctl.core.utils.validators import validate_arg_alphanumeric
 
 app = typer.Typer(help="Server tools: install new server, remove it, print server info")
 
 @app.command()
-def install(
+def install( # pylint: disable=too-many-positional-arguments,too-many-arguments
         name: str = typer.Argument(
             ...,
             help="Name of the server instance.",
@@ -51,15 +51,23 @@ def install(
             "--first-start",
             help="Optional first start to generate world and configs and gracefully exit."
         ),
-    ):
+    ) -> None:
     typer.echo(f"Installing server: {server_type} {version}")
 
     try:
-        ServerInstaller(DEFAULT_HOME_PATH).install(name.lower(), server_type, version, memory, eula, first_start)
+        ServerInstaller(DEFAULT_HOME_PATH).install(
+            InstallArguments(
+                name=name.lower(),
+                server_type=server_type,
+                version=version,
+                memory=memory,
+                eula=eula,
+                first_start=first_start,
+            )
+        )
     except Exception as e:
         typer.echo(str(e))
         raise typer.Exit(code=1)
-
 
 @app.command()
 def remove(
@@ -68,7 +76,7 @@ def remove(
             help="Name of the server instance.",
             callback=validate_arg_alphanumeric,
         ),
-    ):
+    ) -> None:
     server_registry = ServerRegistry(DEFAULT_HOME_PATH.resolve())
 
     try:
@@ -90,7 +98,7 @@ def info(
             help="Name of the server instance.",
             callback=validate_arg_alphanumeric,
         ),
-    ):
+    ) -> None:
     server_registry = ServerRegistry(DEFAULT_HOME_PATH.resolve())
 
     try:
