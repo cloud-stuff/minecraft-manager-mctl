@@ -1,4 +1,4 @@
-![banner.png](assets/banner.png)
+![banner.png](https://github.com/cloud-stuff/minecraft-manager-mctl/blob/main/assets/banner.png?raw=true)
 
 # 🧱 mctl — Minecraft Server Manager CLI
 
@@ -318,5 +318,5 @@ Stops, updates, and restarts a production server safely.
 🧾 License
 
 MIT License © 2025
-See [LICENSE](LICENSE) for details.
+See [LICENSE](https://github.com/cloud-stuff/minecraft-manager-mctl/blob/main/LICENSE) for details.
 

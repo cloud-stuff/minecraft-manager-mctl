@@ -1,11 +1,12 @@
 [project]
 name = "mctl"
-version = "0.1.0"
-description = ""
+version = "0.1.0.dev1"
+description = "Minecraft server management CLI - MCTL"
 authors = [
     {name = "Alex Lykasov", email = "alex@lykasov.com"}
 ]
-readme = "../README.md"
+readme = "README.md"
+license = "MIT"
 requires-python = ">=3.9"
 dependencies = [
     "typer>=0.20.0,<0.21.0",
@@ -19,3 +20,6 @@ packages = [{include = "mctl", from = "src"}]
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+mctl = "mctl.cli.main:main"
