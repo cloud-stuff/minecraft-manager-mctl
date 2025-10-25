@@ -11,21 +11,33 @@ permissions:
   id-token: write
 
 jobs:
-  release:
-    name: Publish package
+  release-test:
+    name: Publish to TestPyPI
     runs-on: ubuntu-latest
-
-    # Only run if tag is created from the "releases" branch
-    if: startsWith(github.ref, 'refs/tags/') && github.event.base_ref == 'refs/heads/releases'
+    if: startsWith(github.ref, 'refs/tags/test-')
+    environment: test
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # ensures we can verify branches if needed
+
+      - name: Verify tag is from releases branch
+        run: |
+          TAG_COMMIT="$(git rev-list -n 1 $GITHUB_REF)"
+          git fetch origin releases:refs/remotes/origin/releases
+          if git merge-base --is-ancestor "$TAG_COMMIT" origin/releases; then
+            echo "Tag commit is on or after 'releases' branch."
+          else
+            echo "Tag not based on 'releases' branch. Aborting."
+            exit 1
+          fi
 
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.10.19
+          python-version: "3.10.19"
 
       - name: Run checks
         working-directory: ./mctl
@@ -38,37 +50,65 @@ jobs:
         run: |
           make clean
 
-      - name: Determine environment from tag
-        id: taginfo
+      - name: Build package
+        working-directory: ./mctl
         run: |
-          TAG_NAME="${GITHUB_REF#refs/tags/}"
-          echo "Tag: $TAG_NAME"
-          if [[ "$TAG_NAME" == test-* ]]; then
-            echo "env=test" >> $GITHUB_OUTPUT
-          elif [[ "$TAG_NAME" == prod-* ]]; then
-            echo "env=prod" >> $GITHUB_OUTPUT
+          make package
+
+      - name: Publish to TestPyPI
+        working-directory: ./mctl
+        env:
+          POETRY_PYPI_TOKEN_TESTPYPI: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          poetry publish -r testpypi --build -u __token__ -p "$POETRY_PYPI_TOKEN_TESTPYPI"
+
+  release-prod:
+    name: Publish to PyPI
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/prod-')
+    environment: prod
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify tag is from releases branch
+        run: |
+          TAG_COMMIT="$(git rev-list -n 1 $GITHUB_REF)"
+          git fetch origin releases:refs/remotes/origin/releases
+          if git merge-base --is-ancestor "$TAG_COMMIT" origin/releases; then
+            echo "Tag commit is on or after 'releases' branch."
           else
-            echo "Unknown tag format: $TAG_NAME"
+            echo "Tag not based on 'releases' branch. Aborting."
             exit 1
           fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10.19"
+
+      - name: Run checks
+        working-directory: ./mctl
+        run: |
+          make install-all
+          make lint
+
+      - name: Clean
+        working-directory: ./mctl
+        run: |
+          make clean
 
       - name: Build package
         working-directory: ./mctl
         run: |
           make package
 
-      # --- TestPyPI Release ---
-      - name: Publish to TestPyPI
-        if: steps.taginfo.outputs.env == 'test'
-        working-directory: ./mctl
-        environment: test
-        run: |
-          poetry publish -r testpypi --build -u __token__ -p "${{ secrets.PYPI_TOKEN }}"
-
-      # --- Production PyPI Release ---
       - name: Publish to PyPI
-        if: steps.taginfo.outputs.env == 'prod'
         working-directory: ./mctl
-        environment: prod
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
         run: |
-          poetry publish -r pypi --build -u __token__ -p "${{ secrets.PYPI_TOKEN }}"
+          poetry publish -r pypi --build -u __token__ -p "$POETRY_PYPI_TOKEN_PYPI"
