@@ -1,7 +1,9 @@
 import subprocess
+from pathlib import Path
+
 import typer
 import requests
-from pathlib import Path
+
 from .base import BaseInstaller
 
 class FabricInstaller(BaseInstaller):
@@ -13,7 +15,7 @@ class FabricInstaller(BaseInstaller):
         latest_installer = data[0]["version"]
         return f"https://meta.fabricmc.net/v2/versions/installer/{latest_installer}"
 
-    def install_fabric_server(self, java_path: str, dest_dir: Path, mc_version: str):
+    def install_fabric_server(self, java_path: str, dest_dir: Path, mc_version: str) -> None:
         """
         Runs the Fabric installer CLI to generate the fabric server files.
         """
@@ -31,7 +33,7 @@ class FabricInstaller(BaseInstaller):
         subprocess.run(cmd, cwd=dest_dir, check=True)
         typer.echo("Fabric server generated successfully.")
 
-    def setup(self, base_downloads: Path, version: str, java_path: str, dest_dir: Path):
+    def setup(self, base_downloads: Path, version: str, java_path: str, dest_dir: Path) -> None:
         """
         Handles downloading the installer, caching it, and running it.
         """
@@ -42,7 +44,7 @@ class FabricInstaller(BaseInstaller):
         if not installer_file.exists():
             typer.echo("Downloading Fabric installer...")
             url = self.get_download_url(version)
-            r = requests.get(url, stream=True)
+            r = requests.get(url, stream=True, timeout=120)
             r.raise_for_status()
             with open(installer_file, "wb") as f:
                 for chunk in r.iter_content(chunk_size=8192):

@@ -17,7 +17,7 @@ class ServerConfigManager:
 
     def get(self, key: str) -> Optional[str]:
         """Return the value for a given key, or None if not found."""
-        with open(self.config_path) as f:
+        with open(self.config_path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line or line.startswith("#"):
@@ -34,7 +34,7 @@ class ServerConfigManager:
         found = False
 
         if self.config_path.exists():
-            with open(self.config_path) as f:
+            with open(self.config_path, encoding="utf-8") as f:
                 for line in f:
                     if line.strip().startswith(f"{key}="):
                         lines.append(f"{key}={value}\n")
@@ -45,5 +45,5 @@ class ServerConfigManager:
         if not found:
             lines.append(f"{key}={value}\n")
 
-        with open(self.config_path, "w") as f:
+        with open(self.config_path, "w", encoding="utf-8") as f:
             f.writelines(lines)

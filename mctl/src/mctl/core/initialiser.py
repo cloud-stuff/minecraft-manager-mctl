@@ -20,14 +20,14 @@ class ProjectInitialiser:
             target.mkdir(parents=True, exist_ok=True)
 
         config_path = self.base / "config.yaml"
-        with open(config_path, "w") as f:
+        with open(config_path, "w", encoding="utf-8") as f:
             yaml.dump(DEFAULT_CONFIG, f)
 
         templates_dir = self.base / "templates"
         (templates_dir / "eula.txt").write_text("eula=true\n")
 
-        return InitialiserResponse(**{
-                "base_path": str(self.base),
-                "dirs": [str(self.base / d) for d in DEFAULT_DIRS],
-                "config_path": str(config_path),
-            })
+        return InitialiserResponse(
+                base_path=str(self.base),
+                dirs=[str(self.base / d) for d in DEFAULT_DIRS],
+                config_path=str(config_path),
+            )

@@ -1,5 +1,4 @@
 import requests
-import typer
 from .base import BaseInstaller
 
 class VanillaInstaller(BaseInstaller):
@@ -11,8 +10,8 @@ class VanillaInstaller(BaseInstaller):
 
         try:
             version_info = next(v for v in manifest["versions"] if v["id"] == version)
-        except StopIteration:
-            raise typer.BadParameter(f"Version {version} does not exist")
+        except StopIteration as e:
+            raise FileNotFoundError(f"Version {version} does not exist") from e
 
         version_json = requests.get(version_info["url"], timeout=10).json()
-        return version_json["downloads"]["server"]["url"]
+        return str(version_json["downloads"]["server"]["url"])

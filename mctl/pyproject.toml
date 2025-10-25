@@ -7,12 +7,24 @@ authors = [
 ]
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "typer>=0.20.0,<0.21.0",
     "pyyaml>=6.0.3,<7.0.0",
     "requests>=2.32.5,<3.0.0"
 ]
+
+[dependency-groups]
+dev = [
+    "pylint (>=4.0.2,<5.0.0)",
+    "mypy (>=1.18.2,<2.0.0)",
+    "types-pyyaml (>=6.0.12.20250915,<7.0.0.0)",
+    "types-requests (>=2.32.4.20250913,<3.0.0.0)",
+
+]
+
+[tool.poetry.group.dev]
+optional = true
 
 [tool.poetry]
 packages = [{include = "mctl", from = "src"}]
@@ -23,3 +35,24 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 mctl = "mctl.cli.main:main"
+
+[tool.pylint.'MESSAGES CONTROL']
+disable = ["missing-docstring", "too-few-public-methods", "broad-exception-caught", "consider-using-with",
+    "raise-missing-from"]
+
+[tool.pylint.format]
+max-line-length = 180
+
+[tool.pylint.main]
+init-hook = "import sys; sys.path.append('src')"
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+check_untyped_defs = true
+disallow_untyped_defs = true
+warn_unused_ignores = true
+warn_return_any = true
+warn_unused_configs = true
+namespace_packages = true
+mypy_path = ["src"]
