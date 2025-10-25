@@ -52,12 +52,17 @@ jobs:
         run: |
           make package
 
+      - name: Configure TestPyPI repository
+        working-directory: ./mctl
+        run: |
+          poetry config repositories.testpypi https://test.pypi.org/legacy/
+
       - name: Publish to TestPyPI
         working-directory: ./mctl
         env:
           POETRY_PYPI_TOKEN_TESTPYPI: ${{ secrets.PYPI_TOKEN }}
         run: |
-          poetry publish -r testpypi --build -u __token__ -p "$POETRY_PYPI_TOKEN_TESTPYPI"
+          poetry publish -r testpypi -u __token__ -p "$POETRY_PYPI_TOKEN_TESTPYPI" --no-interaction --no-ansi
 
   release-prod:
     name: Publish to PyPI
@@ -100,9 +105,14 @@ jobs:
         run: |
           make package
 
+      - name: Configure PyPI repository
+        working-directory: ./mctl
+        run: |
+          poetry config repositories.pypi https://upload.pypi.org/legacy/
+
       - name: Publish to PyPI
         working-directory: ./mctl
         env:
           POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
         run: |
-          poetry publish -r pypi --build -u __token__ -p "$POETRY_PYPI_TOKEN_PYPI"
+          poetry publish -r pypi -u __token__ -p "$POETRY_PYPI_TOKEN_PYPI" --no-interaction --no-ansi
