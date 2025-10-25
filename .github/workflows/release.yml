@@ -1,0 +1,74 @@
+name: Release Package
+
+on:
+  push:
+    tags:
+      - "test-*"
+      - "prod-*"
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  release:
+    name: Publish package
+    runs-on: ubuntu-latest
+
+    # Only run if tag is created from the "releases" branch
+    if: startsWith(github.ref, 'refs/tags/') && github.event.base_ref == 'refs/heads/releases'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.10.19
+
+      - name: Run checks
+        working-directory: ./mctl
+        run: |
+          make install-all
+          make lint
+
+      - name: Clean
+        working-directory: ./mctl
+        run: |
+          make clean
+
+      - name: Determine environment from tag
+        id: taginfo
+        run: |
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+          echo "Tag: $TAG_NAME"
+          if [[ "$TAG_NAME" == test-* ]]; then
+            echo "env=test" >> $GITHUB_OUTPUT
+          elif [[ "$TAG_NAME" == prod-* ]]; then
+            echo "env=prod" >> $GITHUB_OUTPUT
+          else
+            echo "Unknown tag format: $TAG_NAME"
+            exit 1
+          fi
+
+      - name: Build package
+        working-directory: ./mctl
+        run: |
+          make package
+
+      # --- TestPyPI Release ---
+      - name: Publish to TestPyPI
+        if: steps.taginfo.outputs.env == 'test'
+        working-directory: ./mctl
+        environment: test
+        run: |
+          poetry publish -r testpypi --build -u __token__ -p "${{ secrets.PYPI_TOKEN }}"
+
+      # --- Production PyPI Release ---
+      - name: Publish to PyPI
+        if: steps.taginfo.outputs.env == 'prod'
+        working-directory: ./mctl
+        environment: prod
+        run: |
+          poetry publish -r pypi --build -u __token__ -p "${{ secrets.PYPI_TOKEN }}"

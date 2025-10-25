@@ -8,7 +8,7 @@ prepare:
 install: prepare
 	cd $(PROJECT_DIR) && poetry install
 
-install-all:
+install-all: prepare
 	cd $(PROJECT_DIR) && poetry install --with dev
 
 lint:
