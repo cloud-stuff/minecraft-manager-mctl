@@ -10,6 +10,8 @@ app.add_typer(servers.app, name="server")
 app.add_typer(lifecycles.app)
 app.add_typer(config.app, name="config")
 
+def main():
+    app()
 
 if __name__ == '__main__':
     app()
