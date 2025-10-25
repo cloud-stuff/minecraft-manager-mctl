@@ -40,18 +40,15 @@ jobs:
           python-version: "3.10.19"
 
       - name: Run checks
-        working-directory: ./mctl
         run: |
           make install-all
           make lint
 
       - name: Clean
-        working-directory: ./mctl
         run: |
           make clean
 
       - name: Build package
-        working-directory: ./mctl
         run: |
           make package
 
@@ -91,18 +88,15 @@ jobs:
           python-version: "3.10.19"
 
       - name: Run checks
-        working-directory: ./mctl
         run: |
           make install-all
           make lint
 
       - name: Clean
-        working-directory: ./mctl
         run: |
           make clean
 
       - name: Build package
-        working-directory: ./mctl
         run: |
           make package
 
