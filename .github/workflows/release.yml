@@ -57,7 +57,7 @@ jobs:
         env:
           POETRY_PYPI_TOKEN_TESTPYPI: ${{ secrets.PYPI_TOKEN }}
         run: |
-          poetry publish -r testpypi --build -u __token__ -p "$POETRY_PYPI_TOKEN_TESTPYPI"
+          poetry publish -r testpypi --build -u __token__ -p "$POETRY_PYPI_TOKEN_TESTPYPI" --no-interaction --no-ansi
 
   release-prod:
     name: Publish to PyPI
@@ -105,4 +105,4 @@ jobs:
         env:
           POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
         run: |
-          poetry publish -r pypi --build -u __token__ -p "$POETRY_PYPI_TOKEN_PYPI"
+          poetry publish -r pypi --build -u __token__ -p "$POETRY_PYPI_TOKEN_PYPI" --no-interaction --no-ansi
